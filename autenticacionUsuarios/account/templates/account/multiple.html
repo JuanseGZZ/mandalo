@@ -67,8 +67,8 @@
     #barra-carga {
       display: inline-block;
       width: 90%;
+      margin: 5%;
       margin-bottom: 3%;
-      margin-left: 5%;
       height: 8%;
       background-color: #000000b4;
       border-radius: 10px;
@@ -119,11 +119,9 @@
       margin-left: 5%;
     }
 
-    
     .procesar-log {
-      overflow-y: hidden; //scroll
+      overflow-y: scroll;
     }
-   
   </style>
 </head>
 
@@ -134,19 +132,20 @@
   </div>
 
   <div class="container">
-    <div class="left-section" style="padding-left:2%;">
+    <div class="left-section">
       <div class="info">
-        <h3>Informacion de envio</h3>
+        <h3>Cargar Excel</h3>
         <div id="resultado"></div>
       </div>
       <!-- Formulario para cargar el archivo Excel -->
       <form method="post" enctype="multipart/form-data" class="formulario">
         {% csrf_token %}
         {{ form.as_p }}
-        <label>Agregue su Excel con datos</label>
-        <input type="file" id="file-input" style="width: calc(100% - 22px); padding: 10px; border-radius: 5px;border: 1px solid #ccc;" accept=".xlsx, .xls" class="exel"  />
-        <br><br>
+        <input type="file" id="file-input"
+          style="width: calc(100% - 22px); padding: 10px; border-radius: 5px;border: 1px solid #ccc;"
+          accept=".xlsx, .xls" class="exel" />
       </form>
+
 
       <div style="display: flex; justify-content: space-between;">
         <button type="button" class="comprobar-button submitButton abrirModal" id="enviarBtn"
@@ -155,8 +154,7 @@
         <button type="button" class="comprobar-button procesar" onclick="procesarYMostrar()">Procesar</button>
       </div>
 
-
-      <div id="manage" style="display: none;">
+      <div id="manage">
         <button id="botonEliminar">Eliminar Todo</button>
         <button onclick="location.reload();">reload</button>
         <button onclick="mostrar()">mostrar</button>
@@ -164,64 +162,53 @@
       </div>
 
       <br><br><br><br><br>
-<!--
       <h2 class="h2_ayuda">Si nececitas el Template del excel toca el sigueinte boton</h2>
 
       <button type="button" class="ayuda-button">Descargar Template</button>
       </form>
---!>
+
     </div>
 
     <div id="modal" class="modal">
       <section class="modal-contenido">
-        <!--<span id="cerrarModal" class="cerrar">&times;</span>--!>
-
+        <span id="cerrarModal" class="cerrar">&times;</span>
         <div class="titulos-modal">
           <h1>Proceos de envios multiples</h1>
         </div>
-
         <div id="barra-carga">
           <div class="barra-proceso">
 
           </div>
         </div>
-
         <div id="log-container">
           <div class="text-log">
             <h2>log proces: </h2>
           </div>
           <div class="log">
-            <p>PROXIMAMENTE</p>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi, voluptatum. Eaque numquam nihil aperiam
+              dolorem! Accusamus molestiae necessitatibus excepturi velit quasi, optio, odio culpa corrupti adipisci
+              pariatur vero eos dolore.</p>
           </div>
         </div>
-
         <div id="buttons-log">
           <button class="detener-envios-button comprobar-button" onclick="lis()">
             Detener envios
           </button>
-
           <button class="fin-salir comprobar-button" onclick="
           document.querySelector('.modal').style.display = 'none';
           location.reload();
           " style="display: none;">
             Salir
           </button>
-
         </div>
-
-
       </section>
     </div>
 
     <div class="right-section procesar-log">
       <h3>Preview del mensaje:</h3>
       <p id="preview" class="input-field-preview procesar-log"></p>
-      <div id="preview_img"></div>
     </div>
   </div>
-
-
-
 
 
   <div class="fixed-buttons">
@@ -235,19 +222,10 @@
       <h2 class="popup-title">QR</h2>
       <h3 class="popup-subtitle">Escaneame para conectarnos</h3>
       <!-- Aquí puedes colocar la imagen del QR -->
-      <img src="http://149.50.137.174:3002/qr" alt="QR Code">
+      <img src="ruta/a/tu/imagenQR.png" alt="QR Code">
       <button class="popup-close" onclick="closeQrPopup()">Volver</button>
     </div>
   </div>
-
-
-
-
-
-
-
-
-
 
   <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
 
@@ -264,7 +242,7 @@
     let estadop = false;
     {% if estado %}
     estadop = true;
-    window.location.href = 'http://149.50.137.174/'; //127.0.0.1:8000/
+    window.location.href = 'http://127.0.0.1:8000/';
     {% endif %}
     let hayImagen = false;
     let nombreImagen = "";
@@ -306,14 +284,9 @@
 
           // Verificar el tipo de archivo
           if (file.type === "image/png" || file.type === "video/mp4") {
-            if (file.size > (1000 * 1024)) {
-              alert("La imagen o el video debe tener un tamaño máximo de 1000KB.");
-              input.value = ''; // Borra la selección actual
-            }else{
-              console.log("Archivo aceptado.");
-              nombreImagen = file.name;
-              hayImagen = true;
-            }
+            console.log("Archivo aceptado.");
+            nombreImagen = file.name;
+            hayImagen = true;
           } else {
             alert("Por favor, selecciona una imagen PNG o un archivo MP4.");
             // Opcional: Limpia el input de archivo si el archivo no es aceptado
@@ -397,7 +370,7 @@
           document.querySelector(".formulario").submit();
         }
       } else {
-        alert("No se ha seleccionado ningún archivo.");
+        //alert("No se ha seleccionado ningún archivo.");
       }
     }
 
@@ -409,7 +382,7 @@
       estadop = false;
       detenerProceso();
       eliminarTodo();
-      window.location.href = 'http://149.50.137.174/multiple/'; //http://127.0.0.1:8000/multiple/
+      window.location.href = 'http://127.0.0.1:8000/multiple/';
     }
 
     function fin() {
@@ -442,51 +415,47 @@
 
 
     function cargarDatos(arrayObjetos) {
-    let barra = document.querySelector('.barra-proceso');
-    if (!barra) {
+      let barra = document.querySelector('.barra-proceso');
+      if (!barra) {
         console.log("El elemento .barra-proceso no existe en el DOM.");
         return;
-    }
+      }
 
-    // Obtén el progreso actual desde el servidor.
-    fetchMessageCount().then(currentProgress => {
+      // Obtén el progreso actual desde el servidor.
+      fetchMessageCount().then(currentProgress => {
         let i = parseInt(currentProgress, 10);  // 'i' ahora es el progreso desde el servidor.
         let parte = 100 / arrayObjetos.length;  // Calcula cuánto representa cada objeto en la barra.
         let anchoActual = parte * i;
         barra.style.width = `${anchoActual}%`;  // Establece la barra de progreso al estado actual.
 
         function procesarIndice(i) {
-            if (i >= arrayObjetos.length) {
-                // Limpia la barra de progreso y otros almacenamientos si necesario.
-                //alert("Los mensajes se enviaron con éxito!");
-                fin();
-                return;  // Finaliza si todos los objetos han sido procesados.
-            }
-
-          function obtenerNumeroAleatorio(min, max) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
+          if (i >= arrayObjetos.length) {
+            // Limpia la barra de progreso y otros almacenamientos si necesario.
+            alert("Los mensajes se enviaron con éxito!");
+            fin();
+            return;  // Finaliza si todos los objetos han sido procesados.
           }
 
-            // Procesa el objeto actual.
-            console.log(`${arrayObjetos[i].nombre}: ${arrayObjetos[i].numero}`);
-            anchoActual += parte;
-            barra.style.width = `${anchoActual}%`;
+          // Procesa el objeto actual.
+          console.log(`${arrayObjetos[i].nombre}: ${arrayObjetos[i].numero}`);
+          anchoActual += parte;
+          barra.style.width = `${anchoActual}%`;
 
-            let tiempoEspera = obtenerNumeroAleatorio(3000,6000);  // Tiempo de espera por defecto
-            if ((i + 1) % obtenerNumeroAleatorio(29,31) === 0) tiempoEspera = obtenerNumeroAleatorio(840000,1020000);  // Espera 15 minutos cada 30 objetos
-            if ((i + 1) % obtenerNumeroAleatorio(187,201) === 0) tiempoEspera = obtenerNumeroAleatorio(20400000,22800000);  // Espera 6 horas cada 200 objetos
+          let tiempoEspera = 5000;  // Tiempo de espera por defecto
+          if ((i + 1) % 30 === 0) tiempoEspera = 900000;  // Espera 15 minutos cada 30 objetos
+          if ((i + 1) % 200 === 0) tiempoEspera = 21600000;  // Espera 6 horas cada 200 objetos
 
-            setTimeout(() => procesarIndice(i + 1), tiempoEspera);  // Programa el próximo objeto.
+          setTimeout(() => procesarIndice(i + 1), tiempoEspera);  // Programa el próximo objeto.
         }
 
         procesarIndice(i);  // Inicia el procesamiento desde el índice actual.
-    }).catch(error => {
+      }).catch(error => {
         console.error('Error al cargar el progreso inicial:', error);
-    });
-    localStorage.removeItem('barra');
-    localStorage.removeItem('i');
-    localStorage.removeItem('forEnEjecuccion');
-}
+      });
+      localStorage.removeItem('barra');
+      localStorage.removeItem('i');
+      localStorage.removeItem('forEnEjecuccion');
+    }
 
 
     function enviarDatosComplejos() {
@@ -496,7 +465,7 @@
 
       if (localStorage.getItem('nombreImagen')) {
         nombreImagen = localStorage.getItem('nombreImagen');
-        link = `http://149.50.137.174/media/imagenes/${nombreImagen}`; //127.0.0.1:8000
+        link = `http://127.0.0.1:8000/media/imagenes/${nombreImagen}`;
         console.log(link);
       }
       else {
@@ -605,7 +574,7 @@
 
     // boton eliminar
     document.getElementById('botonEliminar').addEventListener('click', function () {
-      if (confirm('Los mensajes se mandaron correctamente')) {
+      if (confirm('¿Estás seguro de que quieres eliminar todos los registros? Esta acción no se puede deshacer.')) {
         fetch('/eliminar-accountmultiple/', {
           method: 'GET', // O 'POST' si configuraste tu vista para requerir un método POST.
           headers: {
@@ -621,38 +590,34 @@
           })
           .then(data => {
             console.log(data); // Manejar la respuesta exitosa
-            //('Todos los registros han sido eliminados.');
+            alert('Todos los registros han sido eliminados.');
           })
           .catch(error => console.error('Error:', error));
       }
     });
 
     function eliminarTodo() {
-      
-	if (confirm('Los mensajes se mandaron correctamente')) {
-        fetch('/eliminar-accountmultiple/', {
-          method: 'GET', // O 'POST' si configuraste tu vista para requerir un método POST.
-          headers: {
-            'X-CSRFToken': getCookie('csrftoken'), // Necesario si estás haciendo un POST y tu vista requiere CSRF token
-          },
-          credentials: 'include' // Necesario si estás utilizando sesiones basadas en cookies para la autenticación
+      //if (confirm('¿Estás seguro de que quieres eliminar todos los registros? Esta acción no se puede deshacer.')) {
+      fetch('/eliminar-accountmultiple/', {
+        method: 'GET', // O 'POST' si configuraste tu vista para requerir un método POST.
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken'), // Necesario si estás haciendo un POST y tu vista requiere CSRF token
+        },
+        credentials: 'include' // Necesario si estás utilizando sesiones basadas en cookies para la autenticación
+      })
+        .then(response => {
+          if (response.ok) {
+            return response.json(); // O manejar la respuesta como sea adecuado
+          }
+          throw new Error('Algo salió mal con la solicitud fetch.');
         })
-          .then(response => {
-            if (response.ok) {
-              return response.json(); // O manejar la respuesta como sea adecuado
-            }
-            throw new Error('Algo salió mal con la solicitud fetch.');
-          })
-          .then(data => {
-            console.log(data); // Manejar la respuesta exitosa
-            //('Todos los registros han sido eliminados.');
-          })
-          .catch(error => console.error('Error:', error));
-      }
+        .then(data => {
+          console.log(data); // Manejar la respuesta exitosa
+          alert('Todos los registros han sido eliminados.');
+        })
+        .catch(error => console.error('Error:', error));
+      //}
     }
-
-
-
 
     // Función para obtener el valor de una cookie por nombre; útil para CSRF token
     function getCookie(name) {
@@ -672,44 +637,22 @@
     }
 
     // evita que se cierre 
-    window.addEventListener('beforeunload', function (e) {
-      // Cancela el evento como forma estándar.
-      localStorage.setItem('forEnEjecuccion', 'false');
-      e.preventDefault();
-      // Chrome requiere que se establezca returnValue.
-      e.returnValue = '';
-    });
+    // window.addEventListener('beforeunload', function (e) {
+    //   // Cancela el evento como forma estándar.
+    //   localStorage.setItem('forEnEjecuccion', 'false');
+    //   e.preventDefault();
+    //   // Chrome requiere que se establezca returnValue.
+    //   e.returnValue = '';
+    // });
 
 
   </script>
 
   <script type="text/javascript">
-    function imagen(){
-      const file = document.querySelector('.imagen').files[0];
-            if (file && file.type.match('image/png')) {
-                const reader = new FileReader();
-                reader.onload = function(evt) {
-                    const imgElement = document.createElement("img");
-                    imgElement.src = evt.target.result;
-                    imgElement.style.maxWidth = '300px'; // Ajusta según tus necesidades
-                    imgElement.style.maxHeight = '300px'; // Ajusta según tus necesidades
-                    const container = document.getElementById('preview_img');
-                    container.innerHTML = ''; // Limpiar cualquier imagen existente
-                    container.appendChild(imgElement);
-                };
-                reader.readAsDataURL(file);
-            } else {
-                alert('Por favor, selecciona una imagen en formato png.');
-            }
-
-    }
-
     //preview del mensaje
     function procesarYMostrar() {
-      imagen()
       var fileInput = document.querySelector('.exel');
       var file = fileInput.files[0];
-      
 
       if (file) {
         // Verificar la extensión del archivo
@@ -730,15 +673,16 @@
 
           // Procesar los datos del archivo Excel
           var mensaje = document.getElementById('id_mensajem').value; // Mensaje original
-          
+          var preview = document.getElementById('preview');
           preview.innerHTML = ''; // Limpiar el contenido previo
 
           jsonData.forEach(function (row) {
             var nombre = row['nombre']; // Suponiendo que la columna se llama 'nombre'
             var numero = row['numero']; // Suponiendo que la columna se llama 'numero'
-            
-            var mensajeFinal = `Mensaje: Hola ${nombre}, ${mensaje}<br>Numero: ${numero}<br>Imagen:`;
-            document.getElementById('preview').innerHTML = mensajeFinal;
+            var mensajeFinal = 'Hola ' + nombre + ', ' + mensaje + ' -- ' + numero;
+            var p = document.createElement('p');
+            p.textContent = mensajeFinal;
+            preview.appendChild(p);
           });
         };
 
@@ -750,20 +694,16 @@
     async function openQrPopup() {
       var qrPopupBg = document.getElementById('popupBg');
       var qrPopup = document.getElementById('qrPopup');
-      qrPopupBg.style.display = "block";
-      qrPopup.style.display = "block";
-      //qrPopupBg.classList.add('active'); // Agrega la clase active al fondo semitransparente
-      //qrPopup.classList.add('active'); // Agrega la clase active al popup
+      qrPopupBg.classList.add('active'); // Agrega la clase active al fondo semitransparente
+      qrPopup.classList.add('active'); // Agrega la clase active al popup
     }
 
     // Función para cerrar el popup QR
     async function closeQrPopup() {
       var qrPopupBg = document.getElementById('popupBg');
       var qrPopup = document.getElementById('qrPopup');
-      qrPopupBg.style.display = "none";
-      qrPopup.style.display = "none";
-      //qrPopupBg.classList.remove('active'); // Remueve la clase active del fondo semitransparente
-      //qrPopup.classList.remove('active'); // Remueve la clase active del popup
+      qrPopupBg.classList.remove('active'); // Remueve la clase active del fondo semitransparente
+      qrPopup.classList.remove('active'); // Remueve la clase active del popup
     }
 
     // Event listener para el botón de QR
@@ -771,6 +711,29 @@
       event.preventDefault(); // Evitar el comportamiento predeterminado del enlace
       openQrPopup();
     });
+
+    document.addEventListener('DOMContentLoaded', function () {
+      var fileInput = document.getElementById('file-input');
+      var enviarBtn = document.getElementById('enviarBtn');
+
+      // Verificar el estado inicial del input para manejar la recarga de la página
+      enviarBtn.disabled = !fileInput.value;
+
+      fileInput.addEventListener('change', function () {
+        // Habilitar o deshabilitar el botón basado en la presencia de un archivo seleccionado
+        enviarBtn.disabled = !this.files.length;
+      });
+
+      // Intercepta el evento de presionar teclas en los campos de entrada
+      document.querySelector('.formulario').addEventListener('keydown', function (event) {
+        // Chequea si la tecla presionada es 'Enter'
+        if (event.key === 'Enter') {
+          event.preventDefault(); // Previene la acción por defecto
+          return false;           // Detiene la propagación adicional del evento
+        }
+      });
+    });
+
   </script>
 
 </body>

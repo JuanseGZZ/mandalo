@@ -53,7 +53,7 @@ def enviar_datos(request):
         }
 
         # URL del endpoint de tu servidor Node.js
-        url_node = 'http://149.50.137.174:3002/enviar-mensaje'
+        url_node = 'http://127.0.0.1:3002/enviar-mensaje'
 
         # Envía los datos a Node.js
         response = requests.post(url_node, json=datos_a_node)
@@ -73,7 +73,7 @@ def subir_imagen(request):
         form = MiModeloForm(request.POST, request.FILES)
         if form.is_valid():
             instancia = form.save()
-            url = 'http://149.50.137.174:3002/enviar-mensaje'
+            url = 'http://127.0.0.1:3002/enviar-mensaje'
             data = {
                 "phone": instancia.numero,
                 "mensaje": "hola " + instancia.nombre+ " " + instancia.mensaje,

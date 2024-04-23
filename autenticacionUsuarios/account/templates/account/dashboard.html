@@ -7,9 +7,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="stylesheet" href="{% static 'account/dashboard.css' %}">
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
   <style>
     /* Estilos personalizados */
@@ -287,7 +287,7 @@
   document.addEventListener("DOMContentLoaded", function() {
     var youtubeButton = document.getElementById("youtube-button");
     youtubeButton.addEventListener("click", function() {
-      window.location.href = "http://149.50.137.174/multiple/";
+      window.location.href = "http://127.0.0.1:8000/multiple/";
     });
     // Puedes agregar eventos similares para otros botones si es necesario
   });
@@ -296,7 +296,7 @@
 
 <script>
   if (localStorage.getItem('estadoActual')) {
-    window.location.href = 'http://149.50.137.174/multiple/';
+    window.location.href = 'http://127.0.0.1:8000/multiple/';
   }
   </script>
   

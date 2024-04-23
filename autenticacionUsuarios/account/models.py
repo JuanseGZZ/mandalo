@@ -11,5 +11,5 @@ class Documento(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
 class Accountmultiple(models.Model):
-    mensajem = models.CharField(max_length=255, blank=True)
+    mensajem = models.CharField(max_length=255)
     imagenm = models.ImageField(upload_to='imagenes/',null=True,blank=True)
