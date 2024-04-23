@@ -1,0 +1,311 @@
+{% load static %}
+
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'account/dashboard.css' %}">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+  <style>
+    /* Estilos personalizados */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #c4f5fb; /* Cambiar el color de fondo */
+    }
+
+    .navbar {
+      overflow: hidden;
+      background-color: #7a9ba9; /* Cambiar el color del navbar */
+      padding: 10px;
+      width: calc(100% - 250px); /* Restar el ancho del sidebar */
+      position: fixed;
+      top: 0;
+      left: 250px; /* Ajustar para empezar después del sidebar */
+      z-index: 1002; /* Asegurar que esté sobre el sidebar */
+      border-bottom: 2px solid #666; /* Cambiar el color del borde */
+    }
+
+    .navbar a {
+      float: left;
+      display: block;
+      color: white;
+      text-align: center;
+      padding: 14px 20px;
+      text-decoration: none;
+      font-size: 18px;
+    }
+
+    .navbar a:hover {
+      background-color: #666; /* Cambiar el color de fondo al pasar el ratón */
+      color: black;
+    }
+
+    .navbar img {
+      height: 80%;
+      margin-right: 20px;
+    }
+
+    .container {
+      display: flex;
+      margin-top: 50px; /* Ajustar el espacio para el navbar */
+    }
+
+    .sidebar {
+      width: 250px;
+      background-color: #7a9ba9; /* Cambiar el color del sidebar */
+      padding-top: 20px; /* Ajustar el espacio para evitar solapamiento */
+      box-sizing: border-box; /* Incluir el padding en el ancho */
+      height: 100vh; /* Ocupa toda la altura de la ventana */
+      position: fixed;
+      top: 0; /* Colocar el sidebar en la parte superior */
+      left: 0;
+      border-right: 2px solid #666; /* Cambiar el color del borde */
+    }
+
+    .sidebar img {
+      width: 80%;
+      padding: 20px;
+    }
+
+    .sidebar .dropdown {
+      text-align: center;
+      margin-bottom: 10px; /* Añadir espacio entre botones */
+    }
+
+    .sidebar .dropbtn {
+      color: white;
+      font-weight: bold;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 10px 20px;
+      font-size: 25px;
+      margin-bottom: 10px;
+      text-shadow: 3px 3px 5px #38acd5; /* Añadir espacio entre botones */
+    }
+
+    .sidebar .dropdown-content {
+      display: none;
+      position: relative;
+      
+      min-width: 200px;
+      z-index: 1002; /* Asegurar que el dropdown esté sobre el sidebar */
+    }
+
+    .sidebar .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    .sidebar .dropdown-content a {
+      color: white;
+      font-weight: bold;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      margin-bottom: 10px;
+      text-shadow: 3px 3px 5px #38acd5;      
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
+
+    .content {
+      flex: 1; /* El contenido ocupa todo el espacio restante */
+      padding: 20px;
+      margin-left: 250px; /* Ajustar para evitar el solapamiento con el sidebar */
+      background-color: #c4f5fb; /* Cambiar el color del contenido */
+    }
+
+    .button-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .button-container .button {
+      width: calc(20% - 10px); /* Dividir en 3 columnas */
+      padding:100px; /* Aumentar el tamaño */
+      text-align: center;
+      background-color: #38acd5; /* Cambiar el color de los botones */
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 10px;
+      margin-bottom: 20px; /* Añadir espacio entre los botones */
+      background-size: cover; /* Ajustar el tamaño de la imagen */
+      background-position: center; /* Posicionar la imagen en el centro */
+    }
+
+
+    .button-container .button:hover {
+      background-color: #666; /* Cambiar el color al pasar el ratón */
+    }
+
+    .search-container {
+      margin-top: 20px;
+    }
+
+    .search-container input[type=text] {
+      width: calc(100% - 120px); /* Ajustar el ancho para evitar solapamiento */
+      padding: 10px;
+      margin-top: 8px;
+      margin-bottom: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    .search-container button {
+      width: 100px; /* Ajustar el ancho del botón */
+      padding: 10px;
+      background-color: #38acd5; /* Cambiar el color del botón */
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .search-container button:hover {
+      background-color: #666; /* Cambiar el color al pasar el ratón */
+    }
+
+    .button-large {
+      width: 100%;
+      padding: 160px;
+      text-align: center;
+      background-color: #38acd5; /* Cambiar el color del botón grande */
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 10px;
+      margin-top: 20px; /* Añadir espacio arriba */
+      background-image: url('../../../media/boton-large.png'); /* Agregar la imagen de fondo */
+      background-size: cover; /* Ajustar el tamaño de la imagen */
+      background-position: center; /* Posicionar la imagen en el centro */
+    }
+
+    .button-large:hover {
+      background-color: #666; /* Cambiar el color al pasar el ratón */
+    }
+
+    h2 {
+      color: #fea564; /* Cambiar el color del h2 */
+      font-size: 40px; /* Ajustar el tamaño del texto */
+      margin-top: 20px; /* Eliminar el margen superior predeterminado */
+      margin-bottom: -20px; /* Añadir espacio debajo del h2 */
+      text-align: left; /* Alinear a la izquierda */
+    }
+
+    .foto-texto-logo{
+      padding: 20px;
+      width: 450px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="sidebar">
+    <a href="#"><img src="../../../media/logo.png" alt="Logo"></a>
+    <div class="dropdown">
+      <button class="dropbtn">WhatsApp ▼</button>
+      <div class="dropdown-content">
+        <a href="#">Mensajes Masivos</a>
+        <a href="#">Grupos</a>
+      </div>
+    </div>
+    <div class="dropdown">
+      <button class="dropbtn">Instagram ▼</button>
+      <div class="dropdown-content">
+        <a href="#">Publicaciones</a>
+        <a href="#">Mensajeria</a>
+      </div>
+    </div>
+    <div class="dropdown">
+      <button class="dropbtn">Facebook ▼</button>
+      <div class="dropdown-content">
+        <a href="#">Publicaciones</a>
+        <a href="#">Mensajeria</a>
+      </div>
+    </div>
+    <div class="dropdown">
+      <button class="dropbtn">Mail ▼</button>
+      <div class="dropdown-content">
+        <a href="#">Mensajes Masivos</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="navbar">
+    <a href="#">Terminos y condiciones</a>
+    <a href="#">Cuenta</a>
+    <a href="#">Excel</a>
+    <a href="#">Procesos</a>
+    <a href="#">Cerrar sesion</a>
+  </div>
+
+  <div class="container">
+    <div class="content">
+      <img src="../../../media/texto-logo.png"  class="foto-texto-logo" alt="">
+
+      <!--<div class="search-container">
+        <input type="text" placeholder="Buscar...">
+        <button type="submit">Buscar</button>
+      </div>
+      <h2>Ultimo usado</h2>
+      <button class="button-large"></button>-->
+      <h2>Funciones</h2>
+      <div class="button-container">
+        <button id="youtube-button" class="button" style="background-image: url('../../../media/boton-large.png');"></button>
+        <button class="button" style="background-image: url('../../../media/publi-ig.png');"></button>
+        <button class="button" style="background-image: url('../../../media/publi-face.png');"></button>
+        <button class="button" style="background-image: url('../../../media/envio-gmail.png');"></button>
+      </div>
+
+      <h2>Instructivos  </h2>
+      <div class="button-container">
+        <button id="youtube-button" class="button" style="background-image: url('../../../media/boton-large.png');"></button>
+        <button class="button" style="background-image: url('../../../media/publi-ig.png');"></button>
+        <button class="button" style="background-image: url('../../../media/publi-face.png');"></button>
+        <button class="button" style="background-image: url('../../../media/envio-gmail.png');"></button>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    var youtubeButton = document.getElementById("youtube-button");
+    youtubeButton.addEventListener("click", function() {
+      window.location.href = "http://149.50.137.174/multiple/";
+    });
+    // Puedes agregar eventos similares para otros botones si es necesario
+  });
+</script>
+
+
+<script>
+  if (localStorage.getItem('estadoActual')) {
+    window.location.href = 'http://149.50.137.174/multiple/';
+  }
+  </script>
+  
+
+
+
+
+</html>
+
+
+
+

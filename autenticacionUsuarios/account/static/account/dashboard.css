@@ -1,0 +1,67 @@
+body {
+    background-color: #f2f2f2; /* Gris claro */
+    font-family: Arial, sans-serif; /* Aplicar tipografía a toda la web */
+  }
+  
+  .container {
+    text-align: center;
+    margin-top: 10px; /* Reducir el espacio superior del contenedor */
+  }
+  
+  .title {
+    font-size: 5.5rem; /* Tamaño de fuente del título */
+    margin-bottom: 10px; /* Reducir el espacio inferior del título */
+  }
+  
+  .subtitle {
+    margin-top: 10px; /* Ajustar el espacio superior del subtítulo */
+  }
+  
+  .buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 50px;
+  }
+  
+  .buttons .button {
+    flex-grow: 1;
+    width: 45%; /* Ancho ajustado para dejar espacio entre los botones */
+    height: 500px; /* Igualar la altura al ancho para hacer los botones cuadrados */
+    margin: 0 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centra el contenido verticalmente */
+    align-items: center;
+    border-radius: 10px; /* Borde redondeado */
+    background-color: #d7f9d7; /* Verde claro menos fuerte */
+    padding: 20px 0; /* Aumenta el espacio dentro del botón */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Aumenta la visibilidad de la sombra */
+  }
+  
+  .buttons .button:not(:first-child) {
+    margin-left: 10%; /* Agrega espacio entre los botones */
+  }
+  
+  .buttons .button:hover {
+    background-color: #a8e3a8; /* Cambia el color de fondo al pasar el ratón por encima */
+  }
+  
+  .buttons .button .icon.is-large {
+    font-size: 15rem; /* Tamaño del icono más grande */
+    color: white; /* Color blanco para el icono */
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Aumenta la visibilidad de la sombra del icono */
+  }
+  
+  .buttons .button .button-text {
+    margin-top: auto; /* Ajusta el margen superior del texto para que esté en la parte inferior */
+    color: #333; /* Color de texto negro o gris oscuro */
+    font-size: 2.2rem; /* Tamaño de fuente del texto */
+    font-weight: bold; /* Ajusta el peso de la fuente */
+    text-align: center; /* Centra el texto horizontalmente */
+  }
+  
+  .button {
+    text-decoration: none; /* Elimina el subrayado del texto */
+    font-size: 1.5rem; /* Ajusta el tamaño del texto */
+  }
+  

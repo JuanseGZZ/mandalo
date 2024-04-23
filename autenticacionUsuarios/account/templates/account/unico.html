@@ -1,0 +1,98 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'account/unico.css' %}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div class="title-container">
+        <h1 class="main-title">Mensaje Único</h1>
+        <h2 class="subtitle">Vamos a enviar un mensaje a una sola persona</h2>
+      </div>
+      
+      <div class="container">
+        <div class="left-section">
+          <div class="info">
+              <h3>Información a enviar:</h3>
+              <div id="resultado"></div>
+              <form method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              {{ form.as_p }}
+              <button type="submit" class="comprobar-button-enviar" >enviar</button>
+              <button type="button" class="comprobar-button" onclick="comprobar()">Comprobar</button>
+
+              </form>
+          </div>
+        </div>
+      
+        <div class="right-section">
+          <h3>Preview del mensaje:</h3>
+          <p id="preview" class="input-field-preview"></p>
+        </div>
+      </div>
+      
+      <div class="fixed-buttons">
+          <a href="../"><i class="fas fa-home"></i></a>
+          <a href="#" id="openQrPopup"><i class="fas fa-qrcode"></i></a>
+        </div>
+        
+        <div id="popupBg" class="popup-bg"></div>
+        <div id="qrPopup" class="popup">
+            <div class="popup-content">
+                <h2 class="popup-title">QR</h2>
+                <h3 class="popup-subtitle">Escaneame para conectarnos</h3>
+                <!-- Aquí puedes colocar la imagen del QR -->
+                <img src="ruta/a/tu/imagenQR.png" alt="QR Code">
+                <button class="popup-close" onclick="closeQrPopup()">Volver</button>
+            </div>
+        </div>
+      
+      <script>
+          // Función para abrir el popup QR
+          function openQrPopup() {
+          var qrPopupBg = document.getElementById('popupBg');
+          var qrPopup = document.getElementById('qrPopup');
+          qrPopupBg.classList.add('active'); // Agrega la clase active al fondo semitransparente
+          qrPopup.classList.add('active'); // Agrega la clase active al popup
+          }
+      
+          // Función para cerrar el popup QR
+          function closeQrPopup() {
+          var qrPopupBg = document.getElementById('popupBg');
+          var qrPopup = document.getElementById('qrPopup');
+          qrPopupBg.classList.remove('active'); // Remueve la clase active del fondo semitransparente
+          qrPopup.classList.remove('active'); // Remueve la clase active del popup
+          }
+      
+          // Event listener para el botón de QR
+          document.getElementById('openQrPopup').addEventListener('click', function(event) {
+          event.preventDefault(); // Evitar el comportamiento predeterminado del enlace
+          openQrPopup();
+          });
+      
+          // Función para comprobar y mostrar en el preview
+          function comprobar() {
+            var numero = document.getElementById('id_numero').value;
+            var nombre = document.getElementById('id_nombre').value || ''; // Si nombre es nulo, se asigna un string vacío
+            var mensaje = document.getElementById('id_mensaje').value;
+            var tieneMedia = document.getElementById('id_imagen').files.length > 0 ? 'tiene foto' : 'no tiene foto';
+      
+            var previewText = `${numero} - Hola ${nombre}, ${mensaje} - (${tieneMedia})`;
+            document.getElementById('preview').innerText = previewText;
+          }
+      </script>
+
+
+</body>
+
+</html>

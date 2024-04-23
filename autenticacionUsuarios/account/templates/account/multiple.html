@@ -1,0 +1,778 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="{% static 'account/multiple.css' %}">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+
+  <title>Envío Masivo</title>
+  <style>
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 100;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-contenido {
+      background-color: #fefefe;
+      margin: 8% auto;
+      /* Centering vertically */
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      /* Adjust width if necessary */
+      height: 70%;
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+      position: relative;
+    }
+
+    .cerrar {
+      color: #aaa;
+      position: absolute;
+      top: 0;
+      right: 8px;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #abrirModal {
+      font-size: 1rem;
+      padding: 0.5em 3em;
+      cursor: pointer;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      border-radius: 5px;
+    }
+
+    #abrirModal:hover {
+      background-color: #0056b3;
+    }
+
+    #barra-carga {
+      display: inline-block;
+      width: 90%;
+      margin-bottom: 3%;
+      margin-left: 5%;
+      height: 8%;
+      background-color: #000000b4;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .barra-proceso {
+      display: inline-block;
+      height: 100%;
+      width: 1%;
+      background-color: rgba(0, 255, 0, 0.582);
+    }
+
+    #log-container {
+      display: flex;
+      /* Usamos flexbox aquí */
+      align-items: flex-start;
+      /* Alinea los elementos al inicio verticalmente */
+      justify-content: space-between;
+      /* Distribuye el espacio entre los elementos */
+      width: 90%;
+      /* Mantiene margen de 5% a cada lado */
+      margin: 0 5%;
+      /* Esto centra el log-container dentro de modal-contenido */
+      height: 60%;
+      border-radius: 4px;
+      background-color: #0000001f;
+      margin-bottom: 2%;
+    }
+
+    .text-log {
+      width: 20%;
+      /* Ajusta el ancho como necesario */
+      height: 90%;
+    }
+
+    .log {
+      width: 75%;
+      /* Ajustado para prevenir desbordamiento */
+      height: 100%;
+      /* Iguala la altura de text-log */
+      background-color: #b6b6b64d;
+      overflow-y: scroll;
+      overflow-x: hidden;
+    }
+
+    .log p {
+      margin-left: 5%;
+    }
+
+    
+    .procesar-log {
+      overflow-y: hidden; //scroll
+    }
+   
+  </style>
+</head>
+
+<body>
+  <div class="title-container">
+    <h1 class="main-title">Mensaje Masivo</h1>
+    <h2 class="subtitle">Vamos a enviar un mensaje a un grupo de personas</h2>
+  </div>
+
+  <div class="container">
+    <div class="left-section" style="padding-left:2%;">
+      <div class="info">
+        <h3>Informacion de envio</h3>
+        <div id="resultado"></div>
+      </div>
+      <!-- Formulario para cargar el archivo Excel -->
+      <form method="post" enctype="multipart/form-data" class="formulario">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <label>Agregue su Excel con datos</label>
+        <input type="file" id="file-input" style="width: calc(100% - 22px); padding: 10px; border-radius: 5px;border: 1px solid #ccc;" accept=".xlsx, .xls" class="exel"  />
+        <br><br>
+      </form>
+
+      <div style="display: flex; justify-content: space-between;">
+        <button type="button" class="comprobar-button submitButton abrirModal" id="enviarBtn"
+          onclick="grafica_y_almacena()" disabled>Enviar mensajes</button>
+        <button class="modal-button comprobar-button" onclick="abrirModalbutton()">Estado</button>
+        <button type="button" class="comprobar-button procesar" onclick="procesarYMostrar()">Procesar</button>
+      </div>
+
+
+      <div id="manage" style="display: none;">
+        <button id="botonEliminar">Eliminar Todo</button>
+        <button onclick="location.reload();">reload</button>
+        <button onclick="mostrar()">mostrar</button>
+        <button onclick="borrarLS()">borrarLS</button>
+      </div>
+
+      <br><br><br><br><br>
+<!--
+      <h2 class="h2_ayuda">Si nececitas el Template del excel toca el sigueinte boton</h2>
+
+      <button type="button" class="ayuda-button">Descargar Template</button>
+      </form>
+--!>
+    </div>
+
+    <div id="modal" class="modal">
+      <section class="modal-contenido">
+        <!--<span id="cerrarModal" class="cerrar">&times;</span>--!>
+
+        <div class="titulos-modal">
+          <h1>Proceos de envios multiples</h1>
+        </div>
+
+        <div id="barra-carga">
+          <div class="barra-proceso">
+
+          </div>
+        </div>
+
+        <div id="log-container">
+          <div class="text-log">
+            <h2>log proces: </h2>
+          </div>
+          <div class="log">
+            <p>PROXIMAMENTE</p>
+          </div>
+        </div>
+
+        <div id="buttons-log">
+          <button class="detener-envios-button comprobar-button" onclick="lis()">
+            Detener envios
+          </button>
+
+          <button class="fin-salir comprobar-button" onclick="
+          document.querySelector('.modal').style.display = 'none';
+          location.reload();
+          " style="display: none;">
+            Salir
+          </button>
+
+        </div>
+
+
+      </section>
+    </div>
+
+    <div class="right-section procesar-log">
+      <h3>Preview del mensaje:</h3>
+      <p id="preview" class="input-field-preview procesar-log"></p>
+      <div id="preview_img"></div>
+    </div>
+  </div>
+
+
+
+
+
+  <div class="fixed-buttons">
+    <a href="../"><i class="fas fa-home"></i></a>
+    <a href="#" id="openQrPopup"><i class="fas fa-qrcode"></i></a>
+  </div>
+
+  <div id="popupBg" class="popup-bg"></div>
+  <div id="qrPopup" class="popup">
+    <div class="popup-content">
+      <h2 class="popup-title">QR</h2>
+      <h3 class="popup-subtitle">Escaneame para conectarnos</h3>
+      <!-- Aquí puedes colocar la imagen del QR -->
+      <img src="http://149.50.137.174:3002/qr" alt="QR Code">
+      <button class="popup-close" onclick="closeQrPopup()">Volver</button>
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+  <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+
+  <script>
+
+
+
+    let modal = document.getElementById("modal");
+    let btn = document.querySelector(".abrirModal");
+    let span = document.getElementById("cerrarModal");
+    let qr = document.querySelector('.popup-bg');
+
+
+    let estadop = false;
+    {% if estado %}
+    estadop = true;
+    window.location.href = 'http://149.50.137.174/'; //127.0.0.1:8000/
+    {% endif %}
+    let hayImagen = false;
+    let nombreImagen = "";
+
+    if (estadop) {
+      localStorage.setItem('estadoActual', 'true');
+    }
+
+    if (localStorage.getItem('estadoActual')) {
+      estadop = true;
+      modal.style.display = "block";
+      document.getElementById('enviarBtn').style.display = "none";
+      document.querySelector(".formulario").style.display = "none";
+      document.querySelector(".procesar").style.display = "none";
+    }
+    else {
+      document.querySelector(".modal-button").style.display = "none";
+      document.getElementById('enviarBtn').style.display = "block";
+      document.querySelector(".formulario").style.display = "block";
+      document.querySelector(".procesar").style.display = "block";
+    }
+
+    if (localStorage.getItem('hayImagen')) {
+      hayImagen = true;
+      nombreImagen = localStorage.getItem('nombreImagen');
+      url = `/media/imagenes/${nombreImagen}`;
+      console.log(url);
+    }
+    else {
+      // verifica si hay imagen
+      document.querySelector('.imagen').addEventListener('change', function () {
+        // Verifica si hay archivos seleccionados
+        if (this.files && this.files.length > 0) {
+          // Accede al primer archivo
+          const file = this.files[0];
+
+          // Muestra el nombre del archivo
+          console.log("Nombre del archivo:", file.name);
+
+          // Verificar el tipo de archivo
+          if (file.type === "image/png" || file.type === "video/mp4") {
+            if (file.size > (1000 * 1024)) {
+              alert("La imagen o el video debe tener un tamaño máximo de 1000KB.");
+              input.value = ''; // Borra la selección actual
+            }else{
+              console.log("Archivo aceptado.");
+              nombreImagen = file.name;
+              hayImagen = true;
+            }
+          } else {
+            alert("Por favor, selecciona una imagen PNG o un archivo MP4.");
+            // Opcional: Limpia el input de archivo si el archivo no es aceptado
+            this.value = ''; // Esto eliminará la selección actual
+          }
+        } else {
+          // No hay archivo seleccionado
+          console.log("No se ha cargado ningún archivo.");
+        }
+      });
+    }
+
+    let exel_theris = false;
+    let exl = [];
+    if (localStorage.getItem('exel_theris')) {
+      exel_theris = true;
+      const contactosJSON = localStorage.getItem('contactos');
+      if (contactosJSON) {
+        exl = JSON.parse(contactosJSON);
+      }
+    }
+    else {
+      //verifica exel
+      document.querySelector(".exel").addEventListener('change', function () {
+        // Verifica si hay un archivo seleccionado
+        const hasFile = this.files && this.files.length > 0;
+
+        // Opcional: Verifica la extensión del archivo para asegurarte de que es un Excel
+        const validExtensions = ['xlsx', 'xls'];
+        let isValidFile = false;
+        if (hasFile) {
+          const extension = this.files[0].name.split('.').pop().toLowerCase();
+          isValidFile = validExtensions.includes(extension);
+        }
+
+        // Habilita o deshabilita el botón basado en la verificación
+        document.querySelector(".comprobar-button").disabled = !(hasFile && isValidFile);
+
+        if (isValidFile) {
+          exel_theris = true;
+        }
+      });
+    }
+
+    function grafica_y_almacena() {
+      if (modal.style.display === "block") {
+        modal.style.display = "none";
+      } else {
+        modal.style.display = "block";
+      }
+
+      var fileInput = document.getElementById('file-input'); // Obtén el input por su ID
+      if (fileInput && fileInput.files.length > 0) {
+        var file = fileInput.files[0];
+        if (hayImagen) {
+          localStorage.setItem('hayImagen', 'true');
+          localStorage.setItem('nombreImagen', nombreImagen);
+        }
+        if (exel_theris) {
+          var reader = new FileReader();
+          reader.onload = function (event) {
+            var data = new Uint8Array(event.target.result);
+            var workbook = XLSX.read(data, { type: 'array' });
+            var firstSheetName = workbook.SheetNames[0];
+            var worksheet = workbook.Sheets[firstSheetName];
+
+            // Convertir la hoja a un array de objetos, omitiendo la primera fila
+            var rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 }).slice(1);
+
+            // Convertir cada fila en un objeto y filtrar filas vacías
+            var contactos = rows.filter(row => row.length).map(([nombre, numero]) => ({ nombre, numero }));
+
+            // Guardar en Local Storage solo si el archivo es válido
+            localStorage.setItem('contactos', JSON.stringify(contactos));
+            localStorage.setItem('exel_theris', 'true');
+            localStorage.setItem('mensaje', document.getElementById('id_mensajem').value);
+            //alert('Contactos guardados correctamente en Local Storage.');
+          };
+          reader.readAsArrayBuffer(file);
+
+          document.querySelector(".formulario").submit();
+        }
+      } else {
+        alert("No se ha seleccionado ningún archivo.");
+      }
+    }
+
+    let forEnEjecuccion = localStorage.getItem('forEnEjecucion');
+
+    function lis() {
+      borrarLS();
+      forEnEjecuccion = false;
+      estadop = false;
+      detenerProceso();
+      eliminarTodo();
+      window.location.href = 'http://149.50.137.174/multiple/'; //http://127.0.0.1:8000/multiple/
+    }
+
+    function fin() {
+      borrarLS();
+      forEnEjecuccion = false;
+      estadop = false;
+      detenerProceso();
+      eliminarTodo();
+      document.querySelector('.fin-salir').style.display = "block";
+      document.querySelector('.detener-envios-button').style.display = "none";
+    }
+
+    function fetchMessageCount() {
+      return fetch('/ruta-a-get-count')  // Asegúrate de que la URL es correcta.
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log("Número actual de mensajes enviados:", data.count);
+          return data.count;  // Devuelve el conteo actual.
+        })
+        .catch(error => {
+          console.error('Error fetching message count:', error);
+          return 0;  // Devuelve 0 en caso de error para manejo de fallos.
+        });
+    }
+
+
+    function cargarDatos(arrayObjetos) {
+    let barra = document.querySelector('.barra-proceso');
+    if (!barra) {
+        console.log("El elemento .barra-proceso no existe en el DOM.");
+        return;
+    }
+
+    // Obtén el progreso actual desde el servidor.
+    fetchMessageCount().then(currentProgress => {
+        let i = parseInt(currentProgress, 10);  // 'i' ahora es el progreso desde el servidor.
+        let parte = 100 / arrayObjetos.length;  // Calcula cuánto representa cada objeto en la barra.
+        let anchoActual = parte * i;
+        barra.style.width = `${anchoActual}%`;  // Establece la barra de progreso al estado actual.
+
+        function procesarIndice(i) {
+            if (i >= arrayObjetos.length) {
+                // Limpia la barra de progreso y otros almacenamientos si necesario.
+                //alert("Los mensajes se enviaron con éxito!");
+                fin();
+                return;  // Finaliza si todos los objetos han sido procesados.
+            }
+
+          function obtenerNumeroAleatorio(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+          }
+
+            // Procesa el objeto actual.
+            console.log(`${arrayObjetos[i].nombre}: ${arrayObjetos[i].numero}`);
+            anchoActual += parte;
+            barra.style.width = `${anchoActual}%`;
+
+            let tiempoEspera = obtenerNumeroAleatorio(3000,6000);  // Tiempo de espera por defecto
+            if ((i + 1) % obtenerNumeroAleatorio(29,31) === 0) tiempoEspera = obtenerNumeroAleatorio(840000,1020000);  // Espera 15 minutos cada 30 objetos
+            if ((i + 1) % obtenerNumeroAleatorio(187,201) === 0) tiempoEspera = obtenerNumeroAleatorio(20400000,22800000);  // Espera 6 horas cada 200 objetos
+
+            setTimeout(() => procesarIndice(i + 1), tiempoEspera);  // Programa el próximo objeto.
+        }
+
+        procesarIndice(i);  // Inicia el procesamiento desde el índice actual.
+    }).catch(error => {
+        console.error('Error al cargar el progreso inicial:', error);
+    });
+    localStorage.removeItem('barra');
+    localStorage.removeItem('i');
+    localStorage.removeItem('forEnEjecuccion');
+}
+
+
+    function enviarDatosComplejos() {
+      const contactosJSON = localStorage.getItem('contactos');
+      exl = JSON.parse(contactosJSON);
+      let mensaje = localStorage.getItem('mensaje');
+
+      if (localStorage.getItem('nombreImagen')) {
+        nombreImagen = localStorage.getItem('nombreImagen');
+        link = `http://149.50.137.174/media/imagenes/${nombreImagen}`; //127.0.0.1:8000
+        console.log(link);
+      }
+      else {
+        link = null;
+      }
+      fetch('/ruta/a/tu/funcion/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')  // Asegúrate de enviar el CSRF token si es necesario
+        },
+        body: JSON.stringify({ contactos: exl, mensaje, link })
+      })
+        .then(response => response.json())
+        .then(data => console.log('Success:', data))
+        .catch(error => console.error('Error:', error));
+    }
+
+
+    if (localStorage.getItem('estadoActual') && !forEnEjecuccion) {
+      const contactosJSON = localStorage.getItem('contactos');
+      exl = JSON.parse(contactosJSON);
+      let forEnEjecuccion = true;
+      enviarDatosComplejos();
+      cargarDatos(exl);
+    }
+
+    function mostrar() {
+      if (localStorage.getItem('exel_theris')) {
+        const contactosJSON = localStorage.getItem('contactos');
+        if (contactosJSON) {
+          exl = JSON.parse(contactosJSON);
+          exl.forEach(ex => {
+            console.log(`Nombre: ${ex.nombre}, Número: ${ex.numero}`);
+          });
+        }
+      }
+      console.log(localStorage.getItem('hayImagen'));
+    }
+
+    function borrarLS() {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        const value = localStorage.getItem(key);
+        console.log(`${key}: ${value}`);
+      }
+      localStorage.clear();
+    }
+
+
+    window.onclick = function (event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+      if (qr.classList.contains("active")) {
+        closeQrPopup();
+      }
+    }
+
+    function abrirModalbutton() {
+      modal.style.display = "block";
+    }
+
+    span.onclick = function () {
+      modal.style.display = "none";
+    }
+
+
+
+    function detenerProceso() {
+      fetch('/stop-process/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')  // Asegúrate de enviar el CSRF token si es necesario
+        }
+      })
+        .then(response => response.json())
+        .then(data => console.log('Success:', data))
+        .catch(error => console.error('Error:', error));
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // boton eliminar
+    document.getElementById('botonEliminar').addEventListener('click', function () {
+      if (confirm('Los mensajes se mandaron correctamente')) {
+        fetch('/eliminar-accountmultiple/', {
+          method: 'GET', // O 'POST' si configuraste tu vista para requerir un método POST.
+          headers: {
+            'X-CSRFToken': getCookie('csrftoken'), // Necesario si estás haciendo un POST y tu vista requiere CSRF token
+          },
+          credentials: 'include' // Necesario si estás utilizando sesiones basadas en cookies para la autenticación
+        })
+          .then(response => {
+            if (response.ok) {
+              return response.json(); // O manejar la respuesta como sea adecuado
+            }
+            throw new Error('Algo salió mal con la solicitud fetch.');
+          })
+          .then(data => {
+            console.log(data); // Manejar la respuesta exitosa
+            //('Todos los registros han sido eliminados.');
+          })
+          .catch(error => console.error('Error:', error));
+      }
+    });
+
+    function eliminarTodo() {
+      
+	if (confirm('Los mensajes se mandaron correctamente')) {
+        fetch('/eliminar-accountmultiple/', {
+          method: 'GET', // O 'POST' si configuraste tu vista para requerir un método POST.
+          headers: {
+            'X-CSRFToken': getCookie('csrftoken'), // Necesario si estás haciendo un POST y tu vista requiere CSRF token
+          },
+          credentials: 'include' // Necesario si estás utilizando sesiones basadas en cookies para la autenticación
+        })
+          .then(response => {
+            if (response.ok) {
+              return response.json(); // O manejar la respuesta como sea adecuado
+            }
+            throw new Error('Algo salió mal con la solicitud fetch.');
+          })
+          .then(data => {
+            console.log(data); // Manejar la respuesta exitosa
+            //('Todos los registros han sido eliminados.');
+          })
+          .catch(error => console.error('Error:', error));
+      }
+    }
+
+
+
+
+    // Función para obtener el valor de una cookie por nombre; útil para CSRF token
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          // ¿Este cookie es el que estamos buscando?
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+
+    // evita que se cierre 
+    window.addEventListener('beforeunload', function (e) {
+      // Cancela el evento como forma estándar.
+      localStorage.setItem('forEnEjecuccion', 'false');
+      e.preventDefault();
+      // Chrome requiere que se establezca returnValue.
+      e.returnValue = '';
+    });
+
+
+  </script>
+
+  <script type="text/javascript">
+    function imagen(){
+      const file = document.querySelector('.imagen').files[0];
+            if (file && file.type.match('image/png')) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    const imgElement = document.createElement("img");
+                    imgElement.src = evt.target.result;
+                    imgElement.style.maxWidth = '300px'; // Ajusta según tus necesidades
+                    imgElement.style.maxHeight = '300px'; // Ajusta según tus necesidades
+                    const container = document.getElementById('preview_img');
+                    container.innerHTML = ''; // Limpiar cualquier imagen existente
+                    container.appendChild(imgElement);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert('Por favor, selecciona una imagen en formato png.');
+            }
+
+    }
+
+    //preview del mensaje
+    function procesarYMostrar() {
+      imagen()
+      var fileInput = document.querySelector('.exel');
+      var file = fileInput.files[0];
+      
+
+      if (file) {
+        // Verificar la extensión del archivo
+        var validExtensions = ['.xlsx', '.xls'];
+        var fileName = file.name;
+        var fileExtension = fileName.slice(((fileName.lastIndexOf(".") - 1) >>> 0) + 2);
+        if (!validExtensions.includes('.' + fileExtension)) {
+          alert('Por favor, sube un archivo Excel válido (.xlsx o .xls).');
+          return; // Salir de la función si el archivo no es Excel
+        }
+
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          var data = new Uint8Array(e.target.result);
+          var workbook = XLSX.read(data, { type: 'array' });
+          var sheet = workbook.Sheets[workbook.SheetNames[0]];
+          var jsonData = XLSX.utils.sheet_to_json(sheet);
+
+          // Procesar los datos del archivo Excel
+          var mensaje = document.getElementById('id_mensajem').value; // Mensaje original
+          
+          preview.innerHTML = ''; // Limpiar el contenido previo
+
+          jsonData.forEach(function (row) {
+            var nombre = row['nombre']; // Suponiendo que la columna se llama 'nombre'
+            var numero = row['numero']; // Suponiendo que la columna se llama 'numero'
+            
+            var mensajeFinal = `Mensaje: Hola ${nombre}, ${mensaje}<br>Numero: ${numero}<br>Imagen:`;
+            document.getElementById('preview').innerHTML = mensajeFinal;
+          });
+        };
+
+        reader.readAsArrayBuffer(file);
+      }
+    }
+
+    // Función para abrir el popup QR
+    async function openQrPopup() {
+      var qrPopupBg = document.getElementById('popupBg');
+      var qrPopup = document.getElementById('qrPopup');
+      qrPopupBg.style.display = "block";
+      qrPopup.style.display = "block";
+      //qrPopupBg.classList.add('active'); // Agrega la clase active al fondo semitransparente
+      //qrPopup.classList.add('active'); // Agrega la clase active al popup
+    }
+
+    // Función para cerrar el popup QR
+    async function closeQrPopup() {
+      var qrPopupBg = document.getElementById('popupBg');
+      var qrPopup = document.getElementById('qrPopup');
+      qrPopupBg.style.display = "none";
+      qrPopup.style.display = "none";
+      //qrPopupBg.classList.remove('active'); // Remueve la clase active del fondo semitransparente
+      //qrPopup.classList.remove('active'); // Remueve la clase active del popup
+    }
+
+    // Event listener para el botón de QR
+    document.getElementById('openQrPopup').addEventListener('click', function (event) {
+      event.preventDefault(); // Evitar el comportamiento predeterminado del enlace
+      openQrPopup();
+    });
+  </script>
+
+</body>
+
+</html>

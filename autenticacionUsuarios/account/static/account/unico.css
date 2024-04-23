@@ -1,0 +1,197 @@
+/* CSS */
+body {
+    background-color: #f2f2f2;
+    font-family: Arial, sans-serif;
+}
+
+label{
+    display: none;
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 50px;
+}
+
+.left-section,
+.right-section {
+    width: 45%;
+}
+
+.main-title {
+    font-size: 3rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+.subtitle {
+    font-size: 1.5rem;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.input-field,
+.file-input {
+    width: calc(100% - 22px);
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.input-field {
+    resize: vertical;
+}
+
+.file-input {
+    overflow: hidden;
+    resize: none;
+}
+
+.comprobar-button {
+    width: calc(50% - 5px); /* Considera el espacio entre los botones */
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.comprobar-button {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.comprobar-button:hover {
+    background-color: #0056b3;
+}
+
+.comprobar-button-enviar {
+    width: calc(50% - 5px); /* Considera el espacio entre los botones */
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.comprobar-button-enviar {
+    background-color: #9fdd2c;
+    color: #fff;
+}
+
+.comprobar-button-enviar:hover {
+    background-color: #678f1d;
+}
+
+.enviar-button {
+    background-color: #28a745;
+    color: #fff;
+    margin-top: 10px; /* Agregar separación entre el input y el botón */
+}
+
+.enviar-button:hover {
+    background-color: #218838;
+}
+
+.info {
+    margin-top: 20px;
+}
+
+.fixed-buttons {
+    position: fixed;
+    top: 10%;
+    right: 0;
+    transform: translateY(-50%);
+}
+
+.fixed-buttons a {
+    display: block;
+    padding: 10px;
+    color: #fff;
+    background-color: #333;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.fixed-buttons a:last-child {
+    margin-bottom: 0;
+}
+
+.right-section input#preview {
+    height: 200px;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+/* Estilos para el popup */
+.popup-bg {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    z-index: 1000;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.popup-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.popup-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.popup-subtitle {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.popup-close {
+    background-color: #ff0000;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.popup-close:hover {
+    background-color: #cc0000;
+}
+
+.popup-bg.active {
+    display: block;
+}
+
+.popup.active {
+    display: block;
+}
