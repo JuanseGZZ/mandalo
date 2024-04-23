@@ -12,4 +12,4 @@ class Documento(models.Model):
 
 class Accountmultiple(models.Model):
     mensajem = models.CharField(max_length=255)
-    imagenm = models.ImageField(upload_to='imagenes/',null=True,blank=True)
+    imagenm = models.FileField(upload_to='imagenes/',null=True,blank=True)
